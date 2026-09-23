@@ -434,81 +434,84 @@ over a maximum of 30 hops:
 
 Trace complete.
 
-C:\Users\admin>route printroute print
 
-Manipulates network routing tables.
 
-ROUTE [-f] [-p] [-4|-6] command [destination]
-                  [MASK netmask]  [gateway] [METRIC metric]  [IF interface]
+C:\Users\admin>route print
+===========================================================================
+Interface List
+  2...c4 c6 e6 e3 28 c7 ......Intel(R) Ethernet Connection (23) I219-V
+ 17...00 ff 91 78 46 f2 ......HotspotShield TAP-Windows Adapter V9
+  6...0a 00 27 00 00 06 ......VirtualBox Host-Only Ethernet Adapter
+ 22...98 bd 80 db 36 e9 ......Microsoft Wi-Fi Direct Virtual Adapter
+ 16...9a bd 80 db 36 e8 ......Microsoft Wi-Fi Direct Virtual Adapter #2
+ 21...00 50 56 c0 00 01 ......VMware Virtual Ethernet Adapter for VMnet1
+ 14...00 50 56 c0 00 08 ......VMware Virtual Ethernet Adapter for VMnet8
+ 12...98 bd 80 db 36 e8 ......Intel(R) Wi-Fi 6E AX211 160MHz
+  1...........................Software Loopback Interface 1
+===========================================================================
 
-  -f           Clears the routing tables of all gateway entries.  If this is
-               used in conjunction with one of the commands, the tables are
-               cleared prior to running the command.
+IPv4 Route Table
+===========================================================================
+Active Routes:
+Network Destination        Netmask          Gateway       Interface  Metric
+        127.0.0.0        255.0.0.0         On-link         127.0.0.1    331
+        127.0.0.1  255.255.255.255         On-link         127.0.0.1    331
+  127.255.255.255  255.255.255.255         On-link         127.0.0.1    331
+      169.254.0.0      255.255.0.0         On-link   169.254.246.131    281
+      169.254.0.0      255.255.0.0         On-link     169.254.87.86    291
+    169.254.87.86  255.255.255.255         On-link     169.254.87.86    291
+  169.254.246.131  255.255.255.255         On-link   169.254.246.131    281
+  169.254.255.255  255.255.255.255         On-link   169.254.246.131    281
+  169.254.255.255  255.255.255.255         On-link     169.254.87.86    291
+     192.168.59.0    255.255.255.0         On-link      192.168.59.1    291
+     192.168.59.1  255.255.255.255         On-link      192.168.59.1    291
+   192.168.59.255  255.255.255.255         On-link      192.168.59.1    291
+    192.168.118.0    255.255.255.0         On-link     192.168.118.1    291
+    192.168.118.1  255.255.255.255         On-link     192.168.118.1    291
+  192.168.118.255  255.255.255.255         On-link     192.168.118.1    291
+        224.0.0.0        240.0.0.0         On-link         127.0.0.1    331
+        224.0.0.0        240.0.0.0         On-link   169.254.246.131    281
+        224.0.0.0        240.0.0.0         On-link     169.254.87.86    291
+        224.0.0.0        240.0.0.0         On-link     192.168.118.1    291
+        224.0.0.0        240.0.0.0         On-link      192.168.59.1    291
+  255.255.255.255  255.255.255.255         On-link         127.0.0.1    331
+  255.255.255.255  255.255.255.255         On-link   169.254.246.131    281
+  255.255.255.255  255.255.255.255         On-link     169.254.87.86    291
+  255.255.255.255  255.255.255.255         On-link     192.168.118.1    291
+  255.255.255.255  255.255.255.255         On-link      192.168.59.1    291
+===========================================================================
+Persistent Routes:
+  None
 
-  -p           When used with the ADD command, makes a route persistent across
-               boots of the system. By default, routes are not preserved
-               when the system is restarted. Ignored for all other commands,
-               which always affect the appropriate persistent routes.
-
-  -4           Force using IPv4.
-
-  -6           Force using IPv6.
-
-  command      One of these:
-                 PRINT     Prints  a route
-                 ADD       Adds    a route
-                 DELETE    Deletes a route
-                 CHANGE    Modifies an existing route
-  destination  Specifies the host.
-  MASK         Specifies that the next parameter is the 'netmask' value.
-  netmask      Specifies a subnet mask value for this route entry.
-               If not specified, it defaults to 255.255.255.255.
-  gateway      Specifies gateway.
-  interface    the interface number for the specified route.
-  METRIC       specifies the metric, ie. cost for the destination.
-
-All symbolic names used for destination are looked up in the network database
-file NETWORKS. The symbolic names for gateway are looked up in the host name
-database file HOSTS.
-
-If the command is PRINT or DELETE. Destination or gateway can be a wildcard,
-(wildcard is specified as a star '*'), or the gateway argument may be omitted.
-
-If Dest contains a * or ?, it is treated as a shell pattern, and only
-matching destination routes are printed. The '*' matches any string,
-and '?' matches any one char. Examples: 157.*.1, 157.*, 127.*, *224*.
-
-Pattern match is only allowed in PRINT command.
-Diagnostic Notes:
-    Invalid MASK generates an error, that is when (DEST & MASK) != DEST.
-    Example> route ADD 157.0.0.0 MASK 155.0.0.0 157.55.80.1 IF 1
-             The route addition failed: The specified mask parameter is invalid. (Destination & Mask) != Destination.
-
-Examples:
-
-    > route PRINT
-    > route PRINT -4
-    > route PRINT -6
-    > route PRINT 157*          .... Only prints those matching 157*
-
-    > route ADD 157.0.0.0 MASK 255.0.0.0  157.55.80.1 METRIC 3 IF 2
-             destination^      ^mask      ^gateway     metric^    ^
-                                                         Interface^
-      If IF is not given, it tries to find the best interface for a given
-      gateway.
-    > route ADD 3ffe::/32 3ffe::1
-
-    > route CHANGE 157.0.0.0 MASK 255.0.0.0 157.55.80.5 METRIC 2 IF 2
-
-      CHANGE is used to modify gateway and/or metric only.
-
-    > route DELETE 157.0.0.0
-    > route DELETE 3ffe::/32
-
-C:\Users\admin>net view
-System error 6118 has occurred.
-
-The list of servers for this workgroup is not currently available
+IPv6 Route Table
+===========================================================================
+Active Routes:
+ If Metric Network Destination      Gateway
+ 12    291 ::/0                     fe80::eedd:24ff:fe3d:ced5
+  1    331 ::1/128                  On-link
+ 12    291 2403:8600:c090:42::/84   On-link
+ 12    291 2403:8600:c090:42:0:414:1dcc:507c/128
+                                    On-link
+  6    281 fe80::/64                On-link
+ 12    291 fe80::/64                On-link
+ 21    291 fe80::/64                On-link
+ 14    291 fe80::/64                On-link
+ 14    291 fe80::56d:8891:5132:242b/128
+                                    On-link
+ 21    291 fe80::3059:2754:8186:3413/128
+                                    On-link
+  6    281 fe80::949e:fac5:b74b:7c28/128
+                                    On-link
+ 12    291 fe80::edad:43e:944d:fdce/128
+                                    On-link
+  1    331 ff00::/8                 On-link
+  6    281 ff00::/8                 On-link
+ 12    291 ff00::/8                 On-link
+ 21    291 ff00::/8                 On-link
+ 14    291 ff00::/8                 On-link
+===========================================================================
+Persistent Routes:
+  None
 ```
 
 ## Result
